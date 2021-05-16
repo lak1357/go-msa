@@ -24,3 +24,5 @@ kubectl deployment
 ```
 kubectl create -f db-service.yaml,db-deployment.yaml,go-msa-service.yaml,claim0-volumeclaim.yaml,go-msa-deployment.yaml
 ```
+
+*deployment files are not tested as at 2021/05/16
