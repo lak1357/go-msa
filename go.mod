@@ -1,4 +1,4 @@
-module example.com/msa-gokit
+module example.com/go-msa
 
 go 1.16
 
