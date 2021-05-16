@@ -1,13 +1,19 @@
 FROM golang:latest
 
-RUN mkdir -p /go/src/example.com/go-msa
+LABEL maintainer="Lakshitha Herath"
 
-WORKDIR /go/src/example.com/go-msa
+WORKDIR /app
 
-COPY . /go/src/example.com/go-msa
+COPY go.mod go.sum ./
 
-RUN go install example.com/go-msa
+RUN go mod download
 
-CMD /go/bin/example.com/go-msa
+COPY . .
+
+# Build the Go app
+RUN go build -o main .
 
 EXPOSE 8080
+
+# Command to run the executable
+CMD ["./main"]

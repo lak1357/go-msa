@@ -9,7 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"example.com/msa-gokit/account"
+	"example.com/go-msa/account"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 )
