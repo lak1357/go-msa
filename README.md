@@ -26,17 +26,17 @@
 └── user.db
 ```
 
-## Get packages
+## Get Packages
 ```bash
 go mod tidy
 ```
 
-## Run server
+## Run Server
 ```bash
 go run main.go
 ```
 
-## Curl Command for testing
+## CURL Command For Testing
 
 ### Create User
 ```bash
@@ -48,17 +48,17 @@ curl --location --request POST 'http://localhost:8080/user' --header 'Content-Ty
 curl --location --request GET 'http://localhost:8080/user/{id}'
 ```
 
-## To build the Docker Image
+## Build The Docker Image
 ```bash
 docker build -t example.com/go-msa:v1 .
 ```
 
-## To run image
+## Run The Docker Image
 ```bash
 docker run -p 8080:8080 -it example.com/go-msa:v1
 ```
 
-## kubectl deployment
+## Kubernetes Deployment
 ```bash
 kubectl create -f db-service.yaml,db-deployment.yaml,go-msa-service.yaml,claim0-volumeclaim.yaml,go-msa-deployment.yaml
 ```
