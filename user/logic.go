@@ -1,4 +1,4 @@
-package account
+package user
 
 import (
 	"context"
@@ -25,20 +25,23 @@ func (s service) CreateUser(ctx context.Context, email string, password string) 
 
 	logger := log.With(s.logger, "method", "CreateUser")
 	uuid, _ := uuid.NewV4()
-	id := uuid.String()
+	uid := uuid.String()
 	user := User{
-		ID:       id,
+		UUID:     uid,
 		Email:    email,
 		Password: password,
 	}
-	if err := s.repository.CreateUser(ctx, user); err != nil {
+
+	id, err := s.repository.CreateUser(ctx, user)
+
+	if err != nil {
 		level.Error(logger).Log("err", err)
 		return "", err
 	}
 
-	logger.Log("create user", id)
+	logger.Log("create user", uid)
 
-	return "Success", nil
+	return id, nil
 }
 
 func (s service) GetUser(ctx context.Context, id string) (string, error) {

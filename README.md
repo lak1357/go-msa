@@ -9,8 +9,15 @@ go run main.go
 ```
 
 Curl Command for testing
+
+Create User
 ```
-curl -G 'http://localhost:8080/user/1234'
+curl --location --request POST 'http://localhost:8080/user' --header 'Content-Type: application/json' --data-raw '{"email" : "testing@gmail.com","password" : "xxxxxx"}'
+```
+
+Get User
+```
+curl --location --request GET 'http://localhost:8080/user/{id}'
 ```
 
 To build the Docker Image

@@ -9,9 +9,12 @@ import (
 	"os/signal"
 	"syscall"
 
-	"example.com/go-msa/account"
+	"example.com/go-msa/database"
+	"example.com/go-msa/user"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 func main() {
@@ -21,7 +24,7 @@ func main() {
 	{
 		logger = log.NewLogfmtLogger(os.Stderr)
 		logger = log.NewSyncLogger(logger)
-		logger = log.With(logger, "service", "account", "time:", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
+		logger = log.With(logger, "service", "user", "time:", log.DefaultTimestampUTC, "caller", log.DefaultCaller)
 	}
 
 	level.Info(logger).Log("msg", "service started")
@@ -30,10 +33,13 @@ func main() {
 	flag.Parse()
 	ctx := context.Background()
 
-	var srv account.Service
+	initDatabase(logger)
+	defer database.DBcon.Close()
+
+	var srv user.Service
 	{
-		repository := account.NewRepo(logger)
-		srv = account.NewService(repository, logger)
+		repository := user.NewRepo(logger)
+		srv = user.NewService(repository, logger)
 	}
 
 	errs := make(chan error)
@@ -44,13 +50,25 @@ func main() {
 		errs <- fmt.Errorf("%s", <-c)
 	}()
 
-	endpoints := account.MakeEndpoints(srv)
+	endpoints := user.MakeEndpoints(srv)
 
 	go func() {
 		fmt.Println("listning on port", *httpAddr)
-		handler := account.NewHTTPServer(ctx, endpoints)
+		handler := user.NewHTTPServer(ctx, endpoints)
 		errs <- http.ListenAndServe(*httpAddr, handler)
 	}()
 
 	level.Error(logger).Log("exit", <-errs)
+}
+
+func initDatabase(logger log.Logger) {
+	var err error
+	database.DBcon, err = gorm.Open("sqlite3", "user.db")
+	if err != nil {
+		level.Error(logger).Log("Failed to connect to database", err)
+		panic("Failed to connect to database")
+	}
+	logger.Log("msg", "Database connection successfully opened")
+	database.DBcon.AutoMigrate(&user.User{})
+	logger.Log("msg", "Database migrated")
 }

@@ -1,4 +1,4 @@
-package account
+package user
 
 import (
 	"context"
@@ -29,6 +29,7 @@ func makeCreateUserEndpoint(s Service) endpoint.Endpoint {
 func makeGetUserEndpoint(s Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 		req := request.(GetUserRequest)
+
 		email, err := s.GetUser(ctx, req.Id)
 		return GetUserResponse{Email: email}, err
 	}
