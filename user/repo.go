@@ -22,13 +22,19 @@ func NewRepo(logger log.Logger) Repository {
 
 func (r *repo) CreateUser(ctx context.Context, user User) (string, error) {
 	db := database.DBcon
-	db.Create(&user)
+	result := db.Create(&user)
+	if result.Error != nil {
+		return "", result.Error
+	}
 	return user.UUID, nil
 }
 
 func (r *repo) GetUser(ctx context.Context, uid string) (string, error) {
 	db := database.DBcon
 	var user User
-	db.Where("UUID = ?", uid).Find(&user)
+	result := db.Where("UUID = ?", uid).Find(&user)
+	if result.Error != nil {
+		return "", result.Error
+	}
 	return user.Email, nil
 }
